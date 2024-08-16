@@ -4,6 +4,7 @@
   "description": "A mempool listener for contract specific transactions.",
   "main": "build/index.js",
   "scripts": {
+    "clean": "rm -rf build && tsc",
     "start": "tsc && node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
