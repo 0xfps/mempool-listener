@@ -1,0 +1,33 @@
+{
+  "name": "mempool-listener",
+  "version": "0.0.0",
+  "description": "A mempool listener for contract specific transactions.",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "tsc && node build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xfps/mempool-listener.git"
+  },
+  "keywords": [
+    "mempool",
+    "ethereum",
+    "blockchain",
+    "listener",
+    "smart-contract",
+    "evm"
+  ],
+  "author": "0xfps",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/0xfps/mempool-listener/issues"
+  },
+  "homepage": "https://github.com/0xfps/mempool-listener#readme",
+  "dependencies": {
+    "chai": "^5.1.1",
+    "ethers": "^6.13.2",
+    "mocha": "^10.7.3"
+  }
+}
