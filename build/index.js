@@ -14,7 +14,6 @@ const check_address_1 = require("./utils/check-address");
 const return_functions_from_abi_1 = require("./utils/return-functions-from-abi");
 const decode_transaction_data_1 = require("./utils/decode-transaction-data");
 const encode_function_with_signature_1 = require("./utils/encode-function-with-signature");
-const constants_1 = require("./tests/constants");
 class MempoolListener {
     /**
      * Sets the endpoint and starts up the provider.
@@ -71,13 +70,11 @@ class MempoolListener {
                 const { data, value } = tx;
                 const transactionFunctionSignature = data.slice(0, 10);
                 const selector = (0, encode_function_with_signature_1.encodeFunctionWithSignature)(this.ABI, this.functionName);
-                console.log({ selector, transactionFunctionSignature });
                 if (transactionFunctionSignature == selector) {
                     const decodedData = (0, decode_transaction_data_1.decodeTransactionData)(this.ABI, { data, value });
                     if (decodedData) {
                         const { args: txArgs } = decodedData;
                         const args = { args: txArgs, value };
-                        console.log(args);
                         this.executableFunction(args);
                     }
                 }
@@ -85,10 +82,4 @@ class MempoolListener {
         });
     }
 }
-const ml = new MempoolListener(constants_1.ChainListenerConfigs.sepolia.url);
-ml.listen({
-    address: constants_1.ChainListenerConfigs.sepolia.address,
-    abi: constants_1.ChainListenerConfigs.sepolia.abis[0],
-    functionName: "handleOps"
-}, (args) => { });
 exports.default = MempoolListener;
