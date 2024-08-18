@@ -46,6 +46,7 @@ class MempoolListener {
             this.ABI = abi;
             this.functionName = functionName;
             this.selector = (0, encode_function_with_signature_1.encodeFunctionWithSignature)(abi, functionName);
+            this.address = address;
             this.executableFunction = executableFunction;
             this.PROVIDER.on("pending", this.handlePendingTransaction);
         });
@@ -62,8 +63,9 @@ class MempoolListener {
      * This function is called whenever a transaction is picked up by the listener. Then,
      * using the hash returned by the listener, returns the parent transaction and then
      * compares the first four bytes of the transaction data with the stored selector to find a match.
-     * If there is a match, the `executableFunction` configured already is called using an object
-     * containing the arguments from the transaction and the value sent along the contract call.
+     * If there is a match, and the `to` key of the transaction data is the configured address,
+     * the `executableFunction` configured already is called using an object containing the arguments
+     * from the transaction and the value sent along the contract call.
      *
      * `decodeTransactionData` will return a valid parsed transaction data even when the
      * transaction data starts with a selector that is not the one being listened for.
@@ -78,10 +80,10 @@ class MempoolListener {
         return __awaiter(this, void 0, void 0, function* () {
             const tx = yield this.PROVIDER.getTransaction(txHash);
             if (tx) {
-                const { data, value } = tx;
+                const { data, value, to } = tx;
                 const transactionFunctionSignature = data.slice(0, 10);
                 const selector = this.selector;
-                if (selector && transactionFunctionSignature == selector) {
+                if (selector && (transactionFunctionSignature == selector) && (to == this.address)) {
                     const decodedData = (0, decode_transaction_data_1.decodeTransactionData)(this.ABI, { data, value });
                     if (decodedData) {
                         const { args: txArgs } = decodedData;
