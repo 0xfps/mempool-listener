@@ -28,6 +28,9 @@ class MempoolListener {
     /**
      * Starts up and listens for transaction made by calling a specific
      * function `config.functionName` at a deployed contract at `config.address`.
+     * It is more efficient to calculate and store the function selector to listen
+     * for, so that, in cases of every `"pending"` listener reception, we're not
+     * recalculating the function selector, instead, comparing with a stored value.
      *
      * @param config                ListenerConfig
      * @param executableFunction    User passed function to be called whenever
@@ -42,17 +45,24 @@ class MempoolListener {
                 throw new Error(`${functionName} is not existent in ABI.\nFunctions in ABI, ${functionNames}`);
             this.ABI = abi;
             this.functionName = functionName;
+            this.selector = (0, encode_function_with_signature_1.encodeFunctionWithSignature)(abi, functionName);
             this.executableFunction = executableFunction;
             this.PROVIDER.on("pending", this.handlePendingTransaction);
         });
     }
     /**
+     * Stops the listening process. This doesn't remove the `executableFunction`,
+     * neither does it remove any class state.
+     */
+    stopListener() {
+        this.PROVIDER.off("pending", this.handlePendingTransaction);
+    }
+    /**
      * This function is called whenever a transaction is picked up by the listener. Then,
      * using the hash returned by the listener, returns the parent transaction and then
-     * compares the first four bytes of the transaction data with the calculated selector
-     * from the `functionName` to find a match. If there is a match, the
-     * `executableFunction` configured already is called using an object containing the
-     * arguments from the transaction and the value sent along the contract call.
+     * compares the first four bytes of the transaction data with the stored selector to find a match.
+     * If there is a match, the `executableFunction` configured already is called using an object
+     * containing the arguments from the transaction and the value sent along the contract call.
      *
      * `decodeTransactionData` will return a valid parsed transaction data even when the
      * transaction data starts with a selector that is not the one being listened for.
@@ -69,8 +79,8 @@ class MempoolListener {
             if (tx) {
                 const { data, value } = tx;
                 const transactionFunctionSignature = data.slice(0, 10);
-                const selector = (0, encode_function_with_signature_1.encodeFunctionWithSignature)(this.ABI, this.functionName);
-                if (transactionFunctionSignature == selector) {
+                const selector = this.selector;
+                if (selector && transactionFunctionSignature == selector) {
                     const decodedData = (0, decode_transaction_data_1.decodeTransactionData)(this.ABI, { data, value });
                     if (decodedData) {
                         const { args: txArgs } = decodedData;
