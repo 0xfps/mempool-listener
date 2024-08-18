@@ -28,9 +28,9 @@ class MempoolListener {
     /**
      * Starts up and listens for transaction made by calling a specific
      * function `config.functionName` at a deployed contract at `config.address`.
-     * It is more efficient to calculate and store the function selector to listen
-     * for, so that, in cases of every `"pending"` listener reception, we're not
-     * recalculating the function selector, instead, comparing with a stored value.
+     * It is more efficient to calculate and store the function selector of the function
+     * to listen for, so that, in cases of every `"pending"` listener reception, we're
+     * not recalculating the function selector, instead, comparing with a stored value.
      *
      * @param config                ListenerConfig
      * @param executableFunction    User passed function to be called whenever
@@ -42,7 +42,7 @@ class MempoolListener {
             (0, check_address_1.checkAddress)(address);
             const functionNames = (0, return_functions_from_abi_1.returnFunctionsFromAbi)(abi);
             if (!functionNames.includes(functionName))
-                throw new Error(`${functionName} is not existent in ABI.\nFunctions in ABI, ${functionNames}`);
+                throw new Error(`${functionName} is not existent in ABI.\nFunctions in ABI: ${functionNames}.`);
             this.ABI = abi;
             this.functionName = functionName;
             this.selector = (0, encode_function_with_signature_1.encodeFunctionWithSignature)(abi, functionName);
@@ -55,7 +55,8 @@ class MempoolListener {
      * neither does it remove any class state.
      */
     stopListener() {
-        this.PROVIDER.off("pending", this.handlePendingTransaction);
+        if (this.PROVIDER)
+            this.PROVIDER.off("pending", this.handlePendingTransaction);
     }
     /**
      * This function is called whenever a transaction is picked up by the listener. Then,

@@ -17,7 +17,7 @@ class MempoolListener {
     /**
      * The `ABI` stores the ABI of the contract to listen to, while
      * the `functionName` holds a string value of the name of the function
-     * to listen for, and the `selector` stores the function selector of
+     * to listen for, and the `selector` stores the calculated function selector of
      * the function we're listening for.
      */
     public ABI!: Abi
@@ -28,13 +28,13 @@ class MempoolListener {
      * The `executableFunction` is a user declared function that
      * runs whenever a pending transaction made to `functionName` is picked up.
      * 
-     * The `executableFunction` requires one parameter, `args`, the arguments
-     * in the picked up pending transaction.
+     * The `executableFunction` requires one parameter, `args`, an object containing
+     * the arguments in the picked up pending transaction and the value sent to the call.
      * 
      * @param args  An object of arguments from the picked up transaction, (`args`)
      *              and the value sent along the contract call, (`value`).
      */
-    public executableFunction !: (args: any) => any
+    public executableFunction!: (args: any) => any
 
     /** 
      * Sets the endpoint and starts up the provider.
@@ -50,9 +50,9 @@ class MempoolListener {
     /**
      * Starts up and listens for transaction made by calling a specific
      * function `config.functionName` at a deployed contract at `config.address`.
-     * It is more efficient to calculate and store the function selector to listen
-     * for, so that, in cases of every `"pending"` listener reception, we're not 
-     * recalculating the function selector, instead, comparing with a stored value.
+     * It is more efficient to calculate and store the function selector of the function
+     * to listen for, so that, in cases of every `"pending"` listener reception, we're
+     * not recalculating the function selector, instead, comparing with a stored value.
      * 
      * @param config                ListenerConfig
      * @param executableFunction    User passed function to be called whenever
@@ -64,12 +64,13 @@ class MempoolListener {
 
         const functionNames = returnFunctionsFromAbi(abi)
         if (!functionNames.includes(functionName))
-            throw new Error(`${functionName} is not existent in ABI.\nFunctions in ABI, ${functionNames}`)
+            throw new Error(`${functionName} is not existent in ABI.\nFunctions in ABI: ${functionNames}.`)
 
         this.ABI = abi
         this.functionName = functionName
         this.selector = encodeFunctionWithSignature(abi, functionName)
         this.executableFunction = executableFunction
+
         this.PROVIDER.on("pending", this.handlePendingTransaction)
     }
 
@@ -78,7 +79,8 @@ class MempoolListener {
      * neither does it remove any class state.
      */
     stopListener() {
-        this.PROVIDER.off("pending", this.handlePendingTransaction)
+        if (this.PROVIDER)
+            this.PROVIDER.off("pending", this.handlePendingTransaction)
     }
 
     /**

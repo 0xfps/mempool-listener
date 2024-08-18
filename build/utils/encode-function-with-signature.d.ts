@@ -1,6 +1,6 @@
 import { Abi } from "../types/abi-types";
 /**
- * Return the function selector for `functionName`.
+ * Return the function selector for `functionName` using its parameters.
  *
  * @param abi           Contract ABI.
  * @param functionName  Function name.

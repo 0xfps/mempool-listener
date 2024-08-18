@@ -1,7 +1,7 @@
 import { BigNumberish } from "ethers"
 
 /**
- * Returned transaction data.
+ * Returned and parsed transaction data.
  */
 
 export type TransactionType = {
