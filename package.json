@@ -1,6 +1,6 @@
 {
   "name": "mempool-listener",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A mempool listener for contract specific transactions.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
