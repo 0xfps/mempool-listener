@@ -61,12 +61,9 @@ function executableFunc(args) {
 
 ```js
 // JavaScript.
-import { Abi } from "mempool-listener/build/types/abi-types"
-import { ListenerConfig } from "mempool-listener/build/types/listener-config-types"
-
 const config = {
     address: "0xabcdef",
-    abi: ["Contract Abi"] as Abi,
+    abi: ["Contract Abi"],
     functionName: "functionName"
 }
 
