@@ -3,7 +3,6 @@ import { BigNumberish } from "ethers"
 /**
  * Returned and parsed transaction data.
  */
-
 export type TransactionType = {
     hash: string,
     from: string,

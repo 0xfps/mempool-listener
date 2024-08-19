@@ -23,10 +23,12 @@ declare class MempoolListener {
      * runs whenever a pending transaction made to `functionName` is picked up.
      *
      * The `executableFunction` requires one parameter, `args`, an object containing
-     * the arguments in the picked up pending transaction and the value sent to the call.
+     * the arguments in the picked up pending transaction, the value sent to the call,
+     * and the gas price paid for the transaction.
      *
-     * @param args  An object of arguments from the picked up transaction, (`args`)
-     *              and the value sent along the contract call, (`value`).
+     * @param args  An object of arguments from the picked up transaction, (`args`),
+     *              the value sent along the contract call, (`value`) and the gas price
+     *              paid for the transaction, (`gasPrice`).
      */
     executableFunction: (args: any) => any;
     /**
@@ -52,6 +54,12 @@ declare class MempoolListener {
      * neither does it remove any class state.
      */
     stopListener(): void;
+    /**
+     * Restarts the listening process. Since the `address`, `abi` and `functionName`
+     * are stored in the class already, it simply only turns on the listener again,
+     * preventing repassing the config and executable function.
+     */
+    restartListener(): void;
     /**
      * This function is called whenever a transaction is picked up by the listener. Then,
      * using the hash returned by the listener, returns the parent transaction and then

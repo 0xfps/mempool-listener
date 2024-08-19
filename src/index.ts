@@ -31,10 +31,12 @@ class MempoolListener {
      * runs whenever a pending transaction made to `functionName` is picked up.
      * 
      * The `executableFunction` requires one parameter, `args`, an object containing
-     * the arguments in the picked up pending transaction and the value sent to the call.
+     * the arguments in the picked up pending transaction, the value sent to the call,
+     * and the gas price paid for the transaction.
      * 
-     * @param args  An object of arguments from the picked up transaction, (`args`)
-     *              and the value sent along the contract call, (`value`).
+     * @param args  An object of arguments from the picked up transaction, (`args`),
+     *              the value sent along the contract call, (`value`) and the gas price
+     *              paid for the transaction, (`gasPrice`).
      */
     public executableFunction!: (args: any) => any
 
@@ -90,6 +92,16 @@ class MempoolListener {
     }
 
     /**
+     * Restarts the listening process. Since the `address`, `abi` and `functionName`
+     * are stored in the class already, it simply only turns on the listener again,
+     * preventing repassing the config and executable function.
+     */
+    restartListener() {
+        if (this.PROVIDER)
+            this.PROVIDER.on("pending", this.handlePendingTransaction)
+    }
+
+    /**
      * This function is called whenever a transaction is picked up by the listener. Then,
      * using the hash returned by the listener, returns the parent transaction and then
      * compares the first four bytes of the transaction data with the stored selector to find a match.
@@ -110,7 +122,7 @@ class MempoolListener {
         const tx: TransactionType = await this.PROVIDER.getTransaction(txHash) as unknown as TransactionType
 
         if (tx) {
-            const { data, value, to } = tx
+            const { data, value, to, gasPrice } = tx
             const transactionFunctionSignature = data.slice(0, 10)
             const selector = this.selector
 
@@ -118,7 +130,7 @@ class MempoolListener {
                 const decodedData = decodeTransactionData(this.ABI, { data, value } as TransactionType)
                 if (decodedData) {
                     const { args: txArgs } = decodedData
-                    const args = { args: txArgs, value }
+                    const args = { args: txArgs, value, gasPrice }
                     this.executableFunction(args)
                 }
             }

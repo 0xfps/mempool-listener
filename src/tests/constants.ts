@@ -4,7 +4,6 @@ import { ENTRY_POINT } from "./abis/entry-point-abi";
  * Configurations for different chains for testing.
  * `functionName` is left out for the purposes of flexibility.
  */
-
 export const ChainListenerConfigs = {
     sepolia: {
         abis: [ENTRY_POINT.abi],

@@ -4,7 +4,6 @@
  * This is a representation of the components of a Solidity ABI
  * in their respective types.
  */
-
 type AbiInput = {
     indexed?: boolean
     components?: AbiInput[],
