@@ -63,6 +63,15 @@ class MempoolListener {
             this.PROVIDER.off("pending", this.handlePendingTransaction);
     }
     /**
+     * Restarts the listening process. Since the `address`, `abi` and `functionName`
+     * are stored in the class already, it simply only turns on the listener again,
+     * preventing repassing the config and executable function.
+     */
+    restartListener() {
+        if (this.PROVIDER)
+            this.PROVIDER.on("pending", this.handlePendingTransaction);
+    }
+    /**
      * This function is called whenever a transaction is picked up by the listener. Then,
      * using the hash returned by the listener, returns the parent transaction and then
      * compares the first four bytes of the transaction data with the stored selector to find a match.
@@ -83,14 +92,14 @@ class MempoolListener {
         return __awaiter(this, void 0, void 0, function* () {
             const tx = yield this.PROVIDER.getTransaction(txHash);
             if (tx) {
-                const { data, value, to } = tx;
+                const { data, value, to, gasPrice } = tx;
                 const transactionFunctionSignature = data.slice(0, 10);
                 const selector = this.selector;
                 if (selector && (transactionFunctionSignature == selector) && (to == this.address)) {
                     const decodedData = (0, decode_transaction_data_1.decodeTransactionData)(this.ABI, { data, value });
                     if (decodedData) {
                         const { args: txArgs } = decodedData;
-                        const args = { args: txArgs, value };
+                        const args = { args: txArgs, value, gasPrice };
                         this.executableFunction(args);
                     }
                 }

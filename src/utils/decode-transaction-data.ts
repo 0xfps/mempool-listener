@@ -12,7 +12,6 @@ import { ParsedTransaction, TransactionType } from "../types/transaction-data-ty
  * 
  * @returns ParsedTransaction | null Parsed transaction data.
  */
-
 export function decodeTransactionData(abi: Abi, { data, value }: TransactionType): ParsedTransaction | null {
     const descr = new ethers.Interface(abi)
     const parsedTransaction = descr.parseTransaction({ data, value }) as unknown as ParsedTransaction

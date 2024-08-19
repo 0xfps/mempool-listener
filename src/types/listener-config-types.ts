@@ -7,7 +7,6 @@ import { Abi } from "./abi-types"
  * @param abi           ABI of contract at `address`.
  * @param functionName  Name of function to listen for.
  */
-
 export type ListenerConfig = {
     address: string,
     abi: Abi,

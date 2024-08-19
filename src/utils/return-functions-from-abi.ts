@@ -8,7 +8,6 @@ import { Abi } from "../types/abi-types";
  * 
  * @returns string[] Array of function names.
  */
-
 export function returnFunctionsFromAbi(abi: Abi): string[] {
     return abi.filter(function (abi) {
         return abi.type == "function"

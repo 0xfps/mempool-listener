@@ -9,7 +9,6 @@ import { Abi } from "../types/abi-types";
  * 
  * @returns string Function selector. 
  */
-
 export function encodeFunctionWithSignature(abi: Abi, functionName: string): string {
     const selectedAbi = abi.find(function (abi) {
         return ((abi.type == "function") && (abi.name == functionName))
