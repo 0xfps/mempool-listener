@@ -21,6 +21,9 @@ class MempoolListener {
      * @param endpoint RPC Endpoint.
      */
     constructor(endpoint) {
+        let subEndpoint = endpoint.replace(/ /g, '');
+        if (subEndpoint.length == 0)
+            throw new Error("Endpoint is an empty string.");
         this.ENDPOINT = endpoint;
         this.PROVIDER = new ethers_1.ethers.JsonRpcProvider(endpoint);
         this.handlePendingTransaction = this.handlePendingTransaction.bind(this);
