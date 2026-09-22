@@ -21,6 +21,7 @@ class MempoolListener {
      * @param endpoint RPC Endpoint.
      */
     constructor(endpoint) {
+        this.listenerConfig = null;
         let subEndpoint = endpoint.replace(/ /g, '');
         if (subEndpoint.length == 0)
             throw new Error("Endpoint is an empty string.");
@@ -50,6 +51,7 @@ class MempoolListener {
             this.functionName = functionName;
             this.selector = (0, encode_function_with_signature_1.encodeFunctionWithSignature)(abi, functionName);
             this.address = address;
+            this.listenerConfig = config;
             this.executableFunction = executableFunction;
             this.PROVIDER.on("pending", this.handlePendingTransaction);
         });
@@ -68,7 +70,7 @@ class MempoolListener {
      * preventing repassing the config and executable function.
      */
     restartListener() {
-        if (this.PROVIDER)
+        if (this.PROVIDER && this.listenerConfig)
             this.PROVIDER.on("pending", this.handlePendingTransaction);
     }
     /**
@@ -91,19 +93,20 @@ class MempoolListener {
     handlePendingTransaction(txHash) {
         return __awaiter(this, void 0, void 0, function* () {
             const tx = yield this.PROVIDER.getTransaction(txHash);
-            if (tx) {
-                const { data, value, to, gasPrice } = tx;
-                const transactionFunctionSignature = data.slice(0, 10);
-                const selector = this.selector;
-                if (selector && (transactionFunctionSignature == selector) && (to == this.address)) {
-                    const decodedData = (0, decode_transaction_data_1.decodeTransactionData)(this.ABI, { data, value });
-                    if (decodedData) {
-                        const { args: txArgs } = decodedData;
-                        const args = { args: txArgs, value, gasPrice };
-                        this.executableFunction(args);
-                    }
-                }
-            }
+            if (!tx)
+                return;
+            const { data, value, to, gasPrice } = tx;
+            if (to != this.address)
+                return;
+            const transactionFunctionSignature = data.slice(0, 10);
+            if (transactionFunctionSignature != this.selector)
+                return;
+            const decodedData = (0, decode_transaction_data_1.decodeTransactionData)(this.ABI, { data, value });
+            if (!decodedData)
+                return;
+            const { args: txArgs } = decodedData;
+            const args = { args: txArgs, value, gasPrice };
+            this.executableFunction(args);
         });
     }
 }

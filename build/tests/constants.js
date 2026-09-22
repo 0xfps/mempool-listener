@@ -9,7 +9,7 @@ const entry_point_abi_1 = require("./abis/entry-point-abi");
 exports.ChainListenerConfigs = {
     sepolia: {
         abis: [entry_point_abi_1.ENTRY_POINT.abi],
-        url: "https://eth-sepolia-public.unifra.io",
+        url: "https://eth-sepolia-testnet.api.pocket.network",
         address: "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"
     }
 };

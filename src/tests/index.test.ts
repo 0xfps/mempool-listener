@@ -3,7 +3,6 @@ import { describe } from "mocha";
 import MempoolListener from "..";
 import { ChainListenerConfigs } from "./constants";
 import { encodeFunctionWithSignature } from "../utils/encode-function-with-signature";
-import { Abi } from "../types/abi-types";
 
 const URL = ChainListenerConfigs.sepolia.url
 const address = ChainListenerConfigs.sepolia.address
@@ -33,7 +32,7 @@ describe("MempoolListener Test", function () {
 
     it("Should start listening.", async function () {
         const mempoolListener = new MempoolListener(URL)
-        await mempoolListener.listen({ abi: ABI as any, address, functionName: "handleOps" }, (args) => { console.log(args) })
+        await mempoolListener.listen({ abi: ABI as any, address, functionName: "handleOps" }, (args) => { console.log({ args }) })
         expect(mempoolListener.address).to.be.eq(address)
         expect(mempoolListener.functionName).to.be.eq("handleOps")
         expect(mempoolListener.executableFunction).to.not.be.undefined

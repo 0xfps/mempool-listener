@@ -25,6 +25,7 @@ class MempoolListener {
     public functionName!: string
     public selector!: string
     public address!: string
+    public listenerConfig: ListenerConfig | null = null
 
     /**
      * The `executableFunction` is a user declared function that
@@ -48,7 +49,7 @@ class MempoolListener {
     constructor(endpoint: string) {
         let subEndpoint = endpoint.replace(/ /g, '')
         if (subEndpoint.length == 0) throw new Error("Endpoint is an empty string.")
-        
+
         this.ENDPOINT = endpoint
         this.PROVIDER = new ethers.JsonRpcProvider(endpoint)
         this.handlePendingTransaction = this.handlePendingTransaction.bind(this)
@@ -77,6 +78,7 @@ class MempoolListener {
         this.functionName = functionName
         this.selector = encodeFunctionWithSignature(abi, functionName)
         this.address = address
+        this.listenerConfig = config
         this.executableFunction = executableFunction
 
         this.PROVIDER.on("pending", this.handlePendingTransaction)
@@ -97,7 +99,7 @@ class MempoolListener {
      * preventing repassing the config and executable function.
      */
     restartListener() {
-        if (this.PROVIDER)
+        if (this.PROVIDER && this.listenerConfig)
             this.PROVIDER.on("pending", this.handlePendingTransaction)
     }
 
@@ -120,21 +122,20 @@ class MempoolListener {
      */
     private async handlePendingTransaction(txHash: string) {
         const tx: TransactionType = await this.PROVIDER.getTransaction(txHash) as unknown as TransactionType
+        if (!tx) return
 
-        if (tx) {
-            const { data, value, to, gasPrice } = tx
-            const transactionFunctionSignature = data.slice(0, 10)
-            const selector = this.selector
+        const { data, value, to, gasPrice } = tx
+        if (to != this.address) return
 
-            if (selector && (transactionFunctionSignature == selector) && (to == this.address)) {
-                const decodedData = decodeTransactionData(this.ABI, { data, value } as TransactionType)
-                if (decodedData) {
-                    const { args: txArgs } = decodedData
-                    const args = { args: txArgs, value, gasPrice }
-                    this.executableFunction(args)
-                }
-            }
-        }
+        const transactionFunctionSignature = data.slice(0, 10)
+        if (transactionFunctionSignature != this.selector) return
+
+        const decodedData = decodeTransactionData(this.ABI, { data, value } as TransactionType)
+        if (!decodedData) return
+
+        const { args: txArgs } = decodedData
+        const args = { args: txArgs, value, gasPrice }
+        this.executableFunction(args)
     }
 }
 

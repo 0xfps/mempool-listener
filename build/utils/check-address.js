@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkAddress = void 0;
+exports.checkAddress = checkAddress;
 const ethers_1 = require("ethers");
 /**
  * Validates the correctness of an address.
@@ -12,4 +12,3 @@ function checkAddress(address) {
         return;
     throw new Error(`${address} is not a valid address.`);
 }
-exports.checkAddress = checkAddress;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.decodeTransactionData = void 0;
+exports.decodeTransactionData = decodeTransactionData;
 const ethers_1 = require("ethers");
 /**
  * Parses a transaction, finding the matching function and extracts the parameter values along with other useful function details.
@@ -17,4 +17,3 @@ function decodeTransactionData(abi, { data, value }) {
     const parsedTransaction = descr.parseTransaction({ data, value });
     return parsedTransaction;
 }
-exports.decodeTransactionData = decodeTransactionData;
