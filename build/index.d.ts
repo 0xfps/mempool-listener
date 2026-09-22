@@ -18,6 +18,7 @@ declare class MempoolListener {
     functionName: string;
     selector: string;
     address: string;
+    listenerConfig: ListenerConfig | null;
     /**
      * The `executableFunction` is a user declared function that
      * runs whenever a pending transaction made to `functionName` is picked up.

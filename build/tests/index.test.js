@@ -44,7 +44,7 @@ const ABI = constants_1.ChainListenerConfigs.sepolia.abis[0];
     it("Should start listening.", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const mempoolListener = new __1.default(URL);
-            yield mempoolListener.listen({ abi: ABI, address, functionName: "handleOps" }, (args) => { console.log(args); });
+            yield mempoolListener.listen({ abi: ABI, address, functionName: "handleOps" }, (args) => { console.log({ args }); });
             (0, chai_1.expect)(mempoolListener.address).to.be.eq(address);
             (0, chai_1.expect)(mempoolListener.functionName).to.be.eq("handleOps");
             (0, chai_1.expect)(mempoolListener.executableFunction).to.not.be.undefined;

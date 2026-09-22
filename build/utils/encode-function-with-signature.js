@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.encodeFunctionWithSignature = void 0;
+exports.encodeFunctionWithSignature = encodeFunctionWithSignature;
 const ethers_1 = require("ethers");
 /**
  * Return the function selector for `functionName` using its parameters.
@@ -23,4 +23,3 @@ function encodeFunctionWithSignature(abi, functionName) {
         throw new Error(`Function string for ${functionName} is inexistent.`);
     return ethers_1.ethers.id(functionString).slice(0, 10);
 }
-exports.encodeFunctionWithSignature = encodeFunctionWithSignature;
